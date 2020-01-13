@@ -106,11 +106,11 @@ def insertLog(scooterData):
         keys = (timestamp, vid, scooterData['state'], scooterData['batteryLevel'], scooterData['lat'], scooterData['lng'], scooterData['isRentable'])
         c.execute(query, keys)
 
-        print("Insert for vehicle with ID=" + str(vid) + " from " + scooterData['lastLocationUpdate'])
+        print("Inserting log entry for vehicle with ID=" + str(vid) + " from " + scooterData['lastLocationUpdate'])
 
         increaseVehicleLogCounter(vid)
     else:
-        print("Error: vehicle with " +scooterData['id'] + " not found in DB!")
+        print("Error: vehicle with " + str(scooterData['id']) + " not found in DB!")
 
 
 def doWeNeedToSaveLocationForVehicle(scooterData):
@@ -131,7 +131,7 @@ def doWeNeedToSaveLocationForVehicle(scooterData):
 
 if not isTableExisting("log"):
     createLogTable()
-if not isTableExisting("vehicle"):
+if not isTableExisting("vehicles"):
     createVehicleTable()
 
 for scooterData in data:
