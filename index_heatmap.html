@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8" />
+    <script src="jquery-3.4.1.min.js"></script>
+    <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css" />
+    <script src="node_modules/leaflet/dist/leaflet.js"></script>
+    <script src="node_modules/heatmap.js/build/heatmap.js"></script>
+    <script src="node_modules/heatmap.js/plugins/leaflet-heatmap/leaflet-heatmap.js"></script>
+
+</head>
+
+<body>
+
+<div>
+    <div id="vehiclelist" style="height: 90%; width: 380px;float: left; position: absolute; overflow: auto"></div>
+    <div id="mapid" style="height: 100px; float: left; position: absolute; left: 390px"></div>
+</div>
+    <script type="text/javascript">
+        var map = null;
+
+        var positions = [];
+
+        var baseLayer = L.tileLayer(
+            'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution:  'Kartendaten &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> Mitwirkende',
+              useCache: true,
+                maxZoom: 18
+            }
+        );
+
+        var cfg = {
+            // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+            // if scaleRadius is false it will be the constant radius used in pixels
+            "radius": 10,
+            "maxOpacity": .8,
+            // scales the radius based on map zoom
+            "scaleRadius": false,
+            // if set to false the heatmap uses the global maximum for colorization
+            // if activated: uses the data maximum within the current map boundaries
+            //   (there will always be a red spot with useLocalExtremas true)
+            "useLocalExtrema": false,
+            // which field name in your data represents the latitude - default "lat"
+            latField: 'lat',
+            // which field name in your data represents the longitude - default "lng"
+            lngField: 'lng',
+            // which field name in your data represents the data value - default "value"
+            valueField: 'count'
+        };
+
+
+        var heatmapLayer = new HeatmapOverlay(cfg);
+
+        map = new L.Map('mapid', {
+            center: new L.LatLng(51.7251, 8.7762),
+            zoom: 13,
+            layers: [baseLayer, heatmapLayer]
+        });
+
+    	$("#mapid").height($(window).height()-50).width($(window).width()-$("#vehiclelist").width());
+    	map.invalidateSize();
+
+
+        $.getJSON("http://localhost:3000/log", function(json) {
+            if (json && json['rows']) {
+                var rows = json['rows'];
+                for (var i = 0; i < rows.length; i++) {
+                    var scooterData = rows[i];
+                    if (scooterData) {
+
+                        positions.push({
+                            lng: scooterData['lng'],
+                            lat: scooterData['lat'],
+                            count: 1
+                        });
+                    }
+                }
+
+                drawHeatMap(positions);
+            }
+        });
+
+        var vehicles = [];
+
+        $.getJSON("http://localhost:3000/vehicles", function(json) {
+            if (json && json['rows']) {
+                var rows = json['rows'];
+                for (var i = 0; i < rows.length; i++) {
+                    var scooterData = rows[i];
+                    if (scooterData) {
+                        vehicles.push(scooterData);
+                    }
+                }
+
+                createVehicleList(vehicles);
+            }
+        });
+
+        function drawHeatMap(positions) {
+            var data = {
+                data: positions
+            };
+            heatmapLayer.setData(data);
+        }
+
+        function createVehicleList(vehicles) {
+          var content = "<h2>Fahrzeuge (" + vehicles.length + ")</h2>";
+
+          content += '<table><th>vin</th><th>licence</th><th>lastLocationUpdate</th><th>logCounter</th>';
+
+          for (var i = 0; i < vehicles.length; i++) {
+            var v = vehicles[i];
+            content += "<tr>";
+            content += "<td>" + v["vin"] + "</td>";
+            content += "<td>" + v["licencePlate"] + "</td>";
+            content += "<td>" + v["lastLocationUpdate"] + "</td>";
+            content += "<td>" + v["logCounter"] + "</td>";
+            content += "</tr>";
+          }
+
+          content += "</table>";
+          $("#vehiclelist").html(content);
+        }
+    </script>
+
+</body>
+
+</html>

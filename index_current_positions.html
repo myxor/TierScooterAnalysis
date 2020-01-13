@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="utf-8" />
+  <script src="jquery-3.4.1.min.js"></script>
+  <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css" />
+  <script src="node_modules/leaflet/dist/leaflet.js"></script>
+
+</head>
+
+<body>
+
+  <div id="mapid" style="min-height: 600px; height: 100%"></div>
+
+  <script type="text/javascript">
+    var map = null;
+
+    var trackLayerGroup = L.layerGroup();
+
+    $.getJSON("http://localhost:3000/current", function(json) {
+      var positions = [];
+      if (json && json['rows']) {
+        var arr = json['rows'];
+        for (var i = 0; i < arr.length; i++) {
+          var scooterData = arr[i];
+          if (scooterData) {
+            positions.push({
+              lng: scooterData['lng'],
+              lat: scooterData['lat'],
+              count: 1
+            });
+          }
+        }
+
+        var markers = generateMarkers(arr);
+
+        var currentPositions = L.layerGroup(markers);
+
+
+        var overlayMaps = {
+          "Current positions": currentPositions,
+          "Track": trackLayerGroup
+        };
+
+        var baseLayer = L.tileLayer(
+          'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '...',
+            maxZoom: 18
+          }
+        );
+        var baseLayers = {
+          "OSM": baseLayer
+        };
+
+        map = new L.Map('mapid', {
+          center: new L.LatLng(51.7251, 8.7762),
+          zoom: 13,
+          layers: [baseLayer, currentPositions, trackLayerGroup]
+        });
+
+        L.control.layers(baseLayers, overlayMaps).addTo(map);
+
+        $("#mapid").height($(window).height()).width($(window).width());
+        map.invalidateSize();
+
+
+        var group = new L.featureGroup(markers);
+        map.fitBounds(group.getBounds());
+
+      }
+    });
+
+    function generateMarkers(scootersData) {
+      var markers = [];
+      for (var i = 0; i < scootersData.length; i++) {
+        var scooterData = scootersData[i];
+        if (scooterData) {
+          var color = 'blue';
+          if (scooterData['state'] != 'ACTIVE') {
+            color = 'red';
+          } else {
+            if (scooterData['isRentable'] == true) {
+              // TODO: this case is always true
+              color = 'green';
+            } else {
+              color = 'yellow';
+            }
+          }
+
+          var icon = new L.Icon({
+            iconUrl: 'images/marker-icon-2x-' + color + '.png',
+            shadowUrl: 'images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+          });
+
+          var info = {
+            icon: icon,
+            title: scooterData['vin'],
+            _scooterData: scooterData
+          };
+
+          var marker = L.marker([scooterData['lat'], scooterData['lng']], info);
+
+          var popupContent = "";
+          for (var prop in scooterData) {
+            if (Object.prototype.hasOwnProperty.call(scooterData, prop)) {
+              popupContent += prop + ": " + scooterData[prop] + "<br>"
+            }
+          }
+
+          popupContent += '<button class="button_track">show today track</button>'
+          marker.bindPopup(popupContent).on("popupopen", (ev) => {
+            $(".button_track").on("click", e => {
+              e.preventDefault();
+              drawTrackForVehicle(ev.popup._source.options._scooterData.id);
+            });
+          });
+          marker.bindTooltip(scooterData['vin']).openTooltip();
+          markers.push(marker);
+
+        }
+
+      }
+      return markers;
+    }
+
+    function drawTrackForVehicle(id) {
+      var polylinePoints = [];
+
+      // First we need to get the internal_id of the vehicle:
+      $.getJSON("http://localhost:3000/vehicles?id=" + id, function(json) {
+        if (json && json['rows']) {
+          var rows = json['rows'];
+          if (rows && rows.length > 0) {
+            var internal_id = rows[0]['internal_id'];
+            if (internal_id > 0) {
+              $.getJSON("http://localhost:3000/log?vehicle_id=" + internal_id + "&timespan=today", function(json) {
+                if (json && json['rows']) {
+                  var rows = json['rows'];
+                  for (var i = 0; i < rows.length; i++) {
+                    var log = rows[i];
+                    polylinePoints.push([log['lat'], log['lng']]);
+                  }
+
+                  var r = Math.floor(Math.random() * 255);
+                  var g = Math.floor(Math.random() * 255);
+                  var b = Math.floor(Math.random() * 255);
+                  var color= "rgb("+r+" ,"+g+","+ b+")";
+
+                  var polyline = L.polyline(polylinePoints, {
+                      color: color,
+                      weight: 5,
+                      smoothFactor: 1
+                   });
+                  //trackLayerGroup = clearLayers();
+                  trackLayerGroup.addLayer(polyline);
+
+                }
+              });
+            }
+          }
+        }
+      });
+
+
+
+    }
+  </script>
+
+</body>
+
+</html>
