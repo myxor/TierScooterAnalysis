@@ -72,7 +72,7 @@ def getVehicleId(scooterData):
         c.execute(
             "SELECT internal_id FROM vehicles WHERE id = ?", (scooterData['id'],))
         r = c.fetchone()
-        print("Created new vehicle from id=" + scooterData['id'] + " with internal_id=" + r[0])
+        print("Created new vehicle from id=" + str(scooterData['id']) + " with internal_id=" + str(r[0]))
         return r[0]
     else:
         return r[0]

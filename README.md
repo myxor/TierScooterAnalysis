@@ -51,11 +51,13 @@ TODO
 
     node api.js
 
-4. Run the data aggregator with
+4. Copy config.example.ini to config.ini and adapt settings if you want
+
+5. Run the data aggregator with
 
     python3 log.py
 
-5. Boom! Open index_current_positions.html or index_heatmap.html in your browser.
+6. Boom! Open index_current_positions.html or index_heatmap.html in your browser.
 
 ## Periodic aggregation of the data
 
