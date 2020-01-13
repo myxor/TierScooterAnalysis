@@ -123,7 +123,7 @@ def doWeNeedToSaveLocationForVehicle(scooterData):
 
     c.execute(query, keys)
     r = c.fetchone()
-    if (not r is None):
+    if (r is None):
         return True
     return False
 
