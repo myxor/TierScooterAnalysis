@@ -1,6 +1,6 @@
 # Some basic stuff for collecting and analysing data from the TIER scooters 🛴
 
-It stores the geopositions, battery level, state and some other information of every [TIER](https://tier.app) scooter inside Paderborn (the region can be changed ofcourse) into a local sqlite3 database.
+It stores the geopositions, battery level, state and some other information of every [TIER](https://tier.app) scooter inside Paderborn (the region can be [configured](https://github.com/myxor/TierScooterAnalysis/blob/master/config.example.ini#L2)) into a local SQLite database.
 It currently provides a basic nodejs RESTful API and two HTML pages to visualize the stored data.
 
 ## Screenshots
@@ -101,9 +101,7 @@ By default the script will log every position that is different from the last on
 * Python3 for backend data aggregator
 * Node for the RESTful API
 * jQuery, CSS, HTML for the frontend
-
-
-
+* SQLite for the database
 
 ## Help wanted
 
