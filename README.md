@@ -7,6 +7,9 @@ It currently provides a basic nodejs RESTful API and two HTML pages to visualize
 
 Here are some screenshots so you can see how it looks right now.
 
+Maps are done with [Leaflet](https://github.com/Leaflet/Leaflet) and the heatmap is generated with [heatmap.js](https://www.patrick-wied.at/static/heatmapjs/de/).
+
+
 ### Heatmap of all geopositions
 
 ![Heatmap of all geopositions](./screenshots/heatmap.png "Heatmap of all geopositions")
