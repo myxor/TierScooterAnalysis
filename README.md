@@ -19,15 +19,15 @@ It currently provides a basic nodejs RESTful API and two HTML pages to see the s
 
 ### vehicles
 
-    GET /vehicles
+    GET http://localhost:3000/vehicles
 
 ### current positions
 
-    GET /current
+    GET http://localhost:3000/current
 
 ### log
 
-    GET /log
+    GET http://localhost:3000/log
 
 ## Pre-requisites 🛠
 * [Node](https://nodejs.org/en/download/)
