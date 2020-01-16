@@ -58,6 +58,10 @@ def createVehicleTable():
 		    logCounter INTEGER DEFAULT 0
         );"""
     c.execute(query)
+
+    query = 'CREATE INDEX log_timestamp_IDX ON log ("timestamp",internal_id);'
+    c.execute(query)
+
     db.commit()
 
 def getVehicleId(scooterData):
