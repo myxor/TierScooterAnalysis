@@ -82,8 +82,8 @@ def getVehicleId(scooterData):
         return r[0]
 
 def updateVehicle(vid, scooterData):
-    query = "UPDATE vehicles SET lastLocationUpdate = ?, lastStateChange = ? WHERE internal_id = ?"
-    keys = (scooterData['lastLocationUpdate'], scooterData['lastStateChange'], vid)
+    query = "UPDATE vehicles SET lastLocationUpdate = ?, lastStateChange = ?, maxSpeed = ?, licencePlate = ?, vin = ?, code = ? WHERE internal_id = ?"
+    keys = (scooterData['lastLocationUpdate'], scooterData['lastStateChange'], scooterData['maxSpeed'], scooterData['licencePlate'], scooterData['vin'], scooterData['code'], vid)
     c.execute(query, keys)
 
 def increaseVehicleLogCounter(vid):
