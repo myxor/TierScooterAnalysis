@@ -1,9 +1,14 @@
-# TierScooterAnalysis
+# Some basic stuff for collecting and analysing data from the TIER scooters 🛴
 
-It stores the geopositions, battery level, state and some other information of every [TIER](https://tier.app) scooter inside Paderborn (can be changed) into a sqlite3 database.
-It currently provides a basic nodejs RESTful API and two HTML pages to see the stored data.
+It stores the geopositions, battery level, state and some other information of every [TIER](https://tier.app) scooter inside Paderborn (the region can be [configured](https://github.com/myxor/TierScooterAnalysis/blob/master/config.example.ini#L2)) into a local SQLite database.
+It currently provides a basic nodejs RESTful API and two HTML pages to visualize the stored data.
 
 ## Screenshots
+
+Here are some screenshots so you can see how it looks right now.
+
+Maps are done with [Leaflet](https://github.com/Leaflet/Leaflet) and the heatmap is generated with [heatmap.js](https://www.patrick-wied.at/static/heatmapjs/de/).
+
 
 ### Heatmap of all geopositions
 
@@ -17,17 +22,46 @@ It currently provides a basic nodejs RESTful API and two HTML pages to see the s
 
 ## RESTful API
 
-### vehicles
+The node RESTful API currenctly provides three endpoints to request the stored data:
+
+### get list of vehicles
+
+#### get list of all vehicles
 
     GET http://localhost:3000/vehicles
+    
+#### get single vehicle filtered by internal id
+    
+    GET http://localhost:3000/vehicles?vehicle_id=34
+    
+#### get single vehicle filtered by id from TIER
 
-### current positions
+    GET http://localhost:3000/vehicles?id=9cd68586-a1e9-48f6-8eb5-a39a25f59769
+
+### get current positions
+
+#### get list of all current positions
 
     GET http://localhost:3000/current
+    
+#### get current position of single vehicle filtered by internal id
 
-### log
+    GET http://localhost:3000/current?vehicle_id=34
+    
+#### get current position of single vehicle filtered by id from TIER
+
+    GET http://localhost:3000/current?id=9cd68586-a1e9-48f6-8eb5-a39a25f59769
+
+
+### get the log
 
     GET http://localhost:3000/log
+    
+#### get the log of single vehicle filtered by internal id
+
+    GET http://localhost:3000/log?vehicle_id=34
+
+
 
 ## Pre-requisites 🛠
 * [Node](https://nodejs.org/en/download/)
@@ -70,9 +104,7 @@ By default the script will log every position that is different from the last on
 * Python3 for backend data aggregator
 * Node for the RESTful API
 * jQuery, CSS, HTML for the frontend
-
-
-
+* SQLite for the database
 
 ## Help wanted
 
