@@ -4,13 +4,12 @@
   "description": "",
   "main": "",
   "dependencies": {
-    "heatmap.js": "^2.0.5",
-    "leaflet": "^1.6.0",
     "cors": "^2.8.4",
     "express": "^4.17.3",
-    "sqlite3": "^4.0.2"
+    "heatmap.js": "^2.0.5",
+    "leaflet": "^1.6.0",
+    "sqlite3": "^5.1.4"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
